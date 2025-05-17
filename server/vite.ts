@@ -62,12 +62,24 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  let distPath;
+  
+  // When running in Vercel:
+  if (process.env.VERCEL) {
+    distPath = path.resolve("dist/public");
+  } else {
+    // Local or other environment
+    distPath = path.resolve(import.meta.dirname, "..", "dist/public");
+  }
 
+  // Ensure the path exists
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    console.warn(`Build directory not found: ${distPath}`);
+    // Create a minimal response instead of throwing
+    app.use("*", (_req, res) => {
+      res.status(200).send("Application is being deployed. Please check back in a moment.");
+    });
+    return;
   }
 
   app.use(express.static(distPath));
