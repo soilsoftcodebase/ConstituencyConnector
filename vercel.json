@@ -16,11 +16,19 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "api/index.ts"
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/(assets|fonts|images|js|css)/(.*)",
+      "dest": "/$1/$2"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|svg|ico|json))",
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/index.html"
     }
   ]
 }
